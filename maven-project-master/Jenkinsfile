@@ -1,7 +1,7 @@
 pipeline
 {
 agent {
-  label 'dev'
+  label 'kavya'
 }
 tools {
   maven 'maven_test'
