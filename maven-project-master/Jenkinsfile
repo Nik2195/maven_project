@@ -1,7 +1,7 @@
 pipeline
 {
 agent {
-  label 'kavya'
+  label 'dev'
 }
 tools {
   maven 'maven_test'
@@ -27,3 +27,4 @@ stages{
 
 }
 }
+//line 14 15 16 is required as maven is not installed in 
