@@ -27,4 +27,7 @@ stages{
 
 }
 }
-//line 14 15 16 is required as maven is not installed in 
+
+
+// line 14 15 16 is required as maven is not installed in ubuntu os. For maven to work it should utilize the pom.xml file.
+// To locate pom.xml, in the github repository, mention the path of the fil.
