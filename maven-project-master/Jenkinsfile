@@ -3,7 +3,6 @@ pipeline
 agent {
   label 'dev'
 }
-
 tools {
   maven 'maven_test'
 }
@@ -13,7 +12,11 @@ stages{
     stage ('build')
     {
         steps{
-            sh 'mvn clean package'
+          script {
+              dir('maven-project-master/pom.xml') {
+                sh 'mvn clean package'
+        }
+        }
         }
         post {
         success {
