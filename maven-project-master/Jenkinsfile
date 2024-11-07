@@ -4,6 +4,10 @@ agent {
   label 'dev'
 }
 
+parameters {
+  string defaultValue: 'Richard', name: 'LAST'
+}
+
 environment{
   NAME = "NIKHIL"
 }
@@ -20,7 +24,7 @@ stages{
           script {
               dir('maven-project-master/') {
                 sh 'mvn clean package'
-                echo "hello $NAME"
+                echo "hello $NAME ${params.LAST}"
         }
         }
         }
