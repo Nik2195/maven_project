@@ -5,7 +5,7 @@ agent {
 }
 
 parameters {
-  string defaultValue: 'Richard', name: 'LAST'
+  choice choices: ['dev', 'prod'], name: 'select_env'
 }
 
 environment{
@@ -23,8 +23,8 @@ stages{
         steps{
           script {
               dir('maven-project-master/') {
-                sh 'mvn clean package'
-                echo "hello $NAME ${params.LAST}"
+                sh 'mvn clean package -DskipTests=true'
+          
         }
         }
         }
@@ -35,23 +35,47 @@ stages{
         parallel {
             stage('testA')
           {
+              agent { label 'dev'}
               steps{
               echo "This is test A"
+              sh "mvn test"
               }
           }
           stage('testB')
           {
+              agent { label 'dev'}
               steps{
               echo "This is test B"
+              sh "mvn test"
               }
           }
         }
 
    post {
         success {
-            archiveArtifacts artifacts: '**/target/*.war'
+            dir( "webapp/target/")
+            {
+              stash name: "maven-build", includes: "*.war"
+            }
                 }
             }
     }
+    stage('deploy_dev')
+    {
+      when { expression {params.select_env == 'dev'}
+      beforeAgent true}
+      agent { label 'dev'}
+      steps{
+          dir("/var/www/html")
+          {
+              unstash "maven-build"
+          }
+          sh """
+          cd /var/www/html
+          jar -xvf webapp.war
+          """
+      }
+    }
+
 }
 }
