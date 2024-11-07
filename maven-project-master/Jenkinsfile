@@ -37,16 +37,22 @@ stages{
           {
               agent { label 'dev'}
               steps{
+              script {
+              dir('maven-project-master/') {
               echo "This is test A"
               sh "mvn test"
+              }
               }
           }
           stage('testB')
           {
               agent { label 'dev'}
               steps{
+              script {
+              dir('maven-project-master/') {
               echo "This is test B"
               sh "mvn test"
+              }
               }
           }
         }
