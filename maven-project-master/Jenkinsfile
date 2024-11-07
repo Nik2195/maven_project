@@ -25,8 +25,8 @@ stages{
           script {
               dir('maven-project-master/') {
                 sh 'mvn clean package'
+              }
                 echo "echo $NAME ${params.lAST}"
-        }
         }
         }
         post {
