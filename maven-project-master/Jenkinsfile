@@ -31,7 +31,6 @@ stages{
     }
 
 }
-}
     stage ('build')
     {
         parallel {
@@ -55,3 +54,4 @@ stages{
                 }
             }
     }
+}
