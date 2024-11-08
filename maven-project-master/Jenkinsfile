@@ -21,8 +21,11 @@ pipeline{
     stage('build')
     {
       steps {
-        sh 'mvn clean package'
-        echo "hi $NAME"
+        script
+        {
+          sh 'mvn clean package'
+          echo "hi $NAME"
+       }
       }
     }
 
