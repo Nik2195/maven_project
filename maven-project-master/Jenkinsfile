@@ -21,7 +21,7 @@ stages{
     stage('build')
     {
         steps {
-            
+            dir('maven-project-master/')
             sh 'mvn clean package -DskipTests=true'
            
         }
@@ -37,6 +37,7 @@ stages{
             {
                 agent { label 'dev' }
                 steps{
+                    dir('maven-project-master/')
                     echo " This is test A"
                     sh "mvn test"
                 }
@@ -46,6 +47,7 @@ stages{
             {
                 agent { label 'dev' }
                 steps{
+                dir('maven-project-master/')
                 echo "this is test B"
                 sh "mvn test"
                 }
