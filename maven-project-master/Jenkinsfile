@@ -3,6 +3,15 @@ pipeline
 agent {
   label 'dev'
 }
+
+parameters {
+  choice choices: ['dev', 'prod'], name: 'select_env'
+}
+
+environment{
+  NAME = "NIKHIL"
+}
+
 tools {
   maven 'maven_test'
 }
@@ -14,20 +23,65 @@ stages{
         steps{
           script {
               dir('maven-project-master/') {
-                sh 'mvn clean package'
+                sh 'mvn clean package -DskipTests=true'
+          
         }
         }
         }
-        post {
+    }
+
+    stage ('test')
+    {
+        parallel {
+            stage('testA')
+          {
+              agent { label 'dev'}
+              steps{
+              script {
+              dir('maven-project-master/') {
+              echo "This is test A"
+              sh "mvn test"
+              }
+              }
+          }
+          stage('testB')
+          {
+              agent { label 'dev'}
+              steps{
+              script {
+              dir('maven-project-master/') {
+              echo "This is test B"
+              sh "mvn test"
+              }
+              }
+          }
+        }
+
+   post {
         success {
-            archiveArtifacts artifacts: '**/target/*.war'
+            dir( "webapp/target/")
+            {
+              stash name: "maven-build", includes: "*.war"
+            }
                 }
             }
+    }
+    stage('deploy_dev')
+    {
+      when { expression {params.select_env == 'dev'}
+      beforeAgent true}
+      agent { label 'dev'}
+      steps{
+          dir("/var/www/html")
+          {
+              unstash "maven-build"
+          }
+          sh """
+          cd /var/www/html
+          jar -xvf webapp.war
+          """
+      }
     }
 
 }
 }
-
-
-// line 14 15 16 is required as maven is not installed in ubuntu os. For maven to work it should utilize the pom.xml file.
-// To locate pom.xml, in the github repository, mention the path of the file.
