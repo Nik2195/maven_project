@@ -54,14 +54,7 @@ pipeline{
             } 
           }
         }
-        post {
-        success {
-        dir("webapp/target/")
-        {
-          stash name: "maven-build", includes: "*.war"
-        }
-        }
-        }
+        
       }      
     }
 
@@ -83,7 +76,14 @@ pipeline{
 
     }
 
-  
+  post {
+        success {
+        dir("webapp/target/")
+        {
+          stash name: "maven-build", includes: "*.war"
+        }
+                }
+      }
     
   }  
   
