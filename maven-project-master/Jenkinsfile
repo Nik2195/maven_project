@@ -21,11 +21,10 @@ pipeline{
     stage('build')
     {
       steps {
-        script
-        {
+          dir('maven-project-master/'){
           sh 'mvn clean package'
           echo "hi $NAME"
-       }
+          }       
       }
     }
 
