@@ -13,7 +13,6 @@ pipeline {
 
   tools {
     maven 'maven_test'
-    jdk 'java test'
   }
 
   stages {
