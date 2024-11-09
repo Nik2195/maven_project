@@ -58,7 +58,7 @@ pipeline {
       }
     }
 
-    stage('deploy_dev') {
+    stage('dev') {
       when { expression { params.Server_test == 'dev' } }
       beforeAgent true
       agent { label 'dev' }
