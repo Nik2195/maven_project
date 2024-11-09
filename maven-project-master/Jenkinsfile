@@ -19,6 +19,10 @@ pipeline {
 
     stage('build') {
       steps {
+        script{
+          file = load "script.groovy"
+          file.hello()
+        }
         script {
           dir('maven-project-master/') {
             sh 'mvn clean package -DskipTests=true'
@@ -63,6 +67,8 @@ pipeline {
       }
       agent { label 'dev' }
       steps {
+        timeout(time:5, unit: 'DAYS'){
+          input message: 'Deployment approval?'
         dir("/var/www/html") {
           unstash "maven-build"
         }
@@ -75,5 +81,6 @@ pipeline {
 
   }
   
+}
 }
 
