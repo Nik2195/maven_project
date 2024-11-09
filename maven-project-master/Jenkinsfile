@@ -2,11 +2,6 @@ pipeline {
   agent {
     label 'dev'
   }
-  
-  tools {
-  jdk 'java test'
-}
-
 
   parameters {
     choice choices: ['dev', 'prod'], name: 'Server_test'
@@ -18,6 +13,7 @@ pipeline {
 
   tools {
     maven 'maven_test'
+    jdk 'java test'
   }
 
   stages {
