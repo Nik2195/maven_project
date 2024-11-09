@@ -1,25 +1,26 @@
-pipeline
-{
-agent {
-  label 'dev'
-}
+pipeline{
+  
+  agent{
+    label 'dev'
+  }
+  
+  parameters {
+  choice choices: ['dev', 'prod'], name: 'Server_test'
+  }
 
-parameters {
-  choice choices: ['dev', 'prod'], name: 'select_env'
-}
-
-environment{
+  environment {
   NAME = "NIKHIL"
-}
-
-tools {
+  }
+  
+  tools {
   maven 'maven_test'
-}
+  }
 
-stages{
-
-    stage ('build')
+  stages{
+  
+    stage('build')
     {
+<<<<<<< HEAD
         steps{
           script {
               dir('maven-project-master/') {
@@ -80,8 +81,74 @@ stages{
           cd /var/www/html
           jar -xvf webapp.war
           """
+=======
+      steps {
+          dir('maven-project-master/'){
+          sh 'mvn clean package -DskipTests=true '
+          echo "hi $NAME"
+          }       
+>>>>>>> 1dd3e41273591b325e83146d1267d3531e058cf7
       }
     }
 
-}
+    stage('test')
+    {
+      parallel {
+        stage ('testA') 
+        {
+          agent { label 'dev' }
+          steps
+          {
+            dir('maven-project-master/'){
+              echo "This is step A"
+              sh 'mvn test'
+            } 
+          }
+        }
+        stage ('testB')
+      
+        {
+          agent { label 'dev' }
+          steps
+          {
+            dir('maven-project-master/'){
+            echo "This is step B"
+            sh 'mvn test'
+            } 
+          }
+        }
+        
+      }      
+    }
+  
+      
+
+    stage('dev')
+    {
+      when { expression {params.Server_test == 'dev'}
+      beforeAgent true}
+      agent { label 'dev'}
+      steps{
+        dir("/var/www/html")
+        {
+          unstash "maven-build"
+        }
+        sh """
+        cd /var/www/html/
+        jar -xvf webapp.war
+        """
+      }
+
+    }
+  
+  
+  }
+    post {
+        success {
+        dir("webapp/target/")
+        {
+          stash name: "maven-build", includes: "*.war"
+        }
+                }
+      }   
 }
