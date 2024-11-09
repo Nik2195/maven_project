@@ -60,7 +60,7 @@ pipeline {
 
     stage('dev') {
       when { expression { params.Server_test == 'dev' }
-      !}
+      }
       agent { label 'dev' }
       steps {
         dir("/var/www/html") {
