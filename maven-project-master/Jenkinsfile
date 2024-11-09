@@ -19,10 +19,10 @@ pipeline {
 
     stage('build') {
       steps {
-        script {
-          file = load "script.groovy"
-          file.hello()
+        script {        
           dir('maven-project-master/') {
+            file = load "script.groovy"
+            file.hello()
             sh 'mvn clean package -DskipTests=true'
           }
         }
