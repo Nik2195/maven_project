@@ -2,10 +2,10 @@ pipeline {
   agent {
     label 'dev'
   }
-
+  
   tools {
-    jdk 'java_test'
-  }
+  jdk 'java test'
+}
 
   parameters {
     choice choices: ['dev', 'prod'], name: 'Server_test'
