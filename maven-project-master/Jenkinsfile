@@ -3,6 +3,10 @@ pipeline {
     label 'dev'
   }
 
+  tools {
+    jdk 'java_test'
+  }
+
   parameters {
     choice choices: ['dev', 'prod'], name: 'Server_test'
   }
