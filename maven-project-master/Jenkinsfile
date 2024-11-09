@@ -1,84 +1,86 @@
-pipeline{
-  
-  agent{
+pipeline {
+  agent {
     label 'dev'
   }
-  
+
   parameters {
-  choice choices: ['dev', 'prod'], name: 'Server_test'
+    choice choices: ['dev', 'prod'], name: 'Server_test'
   }
 
   environment {
-  NAME = "NIKHIL"
-  }
-  
-  tools {
-  maven 'maven_test'
+    NAME = "NIKHIL"
   }
 
-  stages{
-  
-    stage('build')
-    {
-        steps{
-          script {
-              dir('maven-project-master/') {
-                sh 'mvn clean package -DskipTests=true'
-          
+  tools {
+    maven 'maven_test'
+  }
+
+  stages {
+
+    stage('build') {
+      steps {
+        script {
+          dir('maven-project-master/') {
+            sh 'mvn clean package -DskipTests=true'
+          }
         }
-        }
-        }
+      }
     }
 
-    stage ('test')
-    {
-        parallel {
-            stage('testA')
-          {
-              agent { label 'dev'}
-              steps{
-              dir('maven-project-master/') {
+    stage('test') {
+      parallel {
+        stage('testA') {
+          agent { label 'dev' }
+          steps {
+            dir('maven-project-master/') {
               echo "This is test A"
               sh "mvn test"
-              }
-              }
-          stage('testB')
-          {
-              agent { label 'dev'}
-              steps{
-              dir('maven-project-master/') {
+            }
+          }
+        }
+
+        stage('testB') {
+          agent { label 'dev' }
+          steps {
+            dir('maven-project-master/') {
               echo "This is test B"
               sh "mvn test"
-              }
+            }
           }
-          } 
-        } 
-
-   post {
+        }
+      }
+      post {
         success {
-            dir( "webapp/target/")
-            {
-              stash name: "maven-build", includes: "*.war"
-            }
-                }
-            }
-    }
-    }
-    stage('deploy_dev')
-    {
-      when { expression {params.select_env == 'dev'}
-      beforeAgent true}
-      agent { label 'dev'}
-      steps{
-          dir("/var/www/html")
-          {
-              unstash "maven-build"
+          dir("webapp/target/") {
+            stash name: "maven-build", includes: "*.war"
           }
-          sh """
+        }
+      }
+    }
+
+    stage('deploy_dev') {
+      when { expression { params.Server_test == 'dev' } }
+      beforeAgent true
+      agent { label 'dev' }
+      steps {
+        dir("/var/www/html") {
+          unstash "maven-build"
+        }
+        sh """
           cd /var/www/html
           jar -xvf webapp.war
-          """
-        }
+        """
+      }
+    }
+
+  }
+
+  post {
+    success {
+      echo "Build and deployment succeeded"
+    }
+    failure {
+      echo "Build or deployment failed"
     }
   }
 }
