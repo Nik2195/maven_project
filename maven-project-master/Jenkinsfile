@@ -65,8 +65,6 @@ pipeline {
       }
       agent { label 'dev' }
       steps {
-        timeout(time:5, unit: 'DAYS'){
-          input message: 'Deployment approval?'
         dir("/var/www/html") {
           unstash "maven-build"
         }
@@ -74,11 +72,28 @@ pipeline {
           cd /var/www/html
           jar -xvf webapp.war
         """
+        }
       }
-    }
 
-  }
-  
+
+    stage('PROD') {
+      when { expression { params.Server_test == 'prod' }
+      }
+      agent { label 'prod' }
+      steps {
+        timeout(time:5, unit: 'DAYS'){
+          input message: 'Deployment approval?'
+          dir("/var/www/html") {
+          unstash "maven-build"
+          }
+         sh """
+          cd /var/www/html
+          jar -xvf webapp.war
+          """
+        }
+      }
+    } 
+
 }
 }
 
